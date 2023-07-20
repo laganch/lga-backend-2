@@ -2,7 +2,6 @@ package com.government.government.controller;
 
 import com.government.government.dto.AuthRequest;
 import com.government.government.dto.LoginResponse;
-import com.government.government.dto.PortalUserDto;
 import com.government.government.dto.UserDto;
 import com.government.government.entity.Area;
 import com.government.government.entity.Lga;
@@ -10,12 +9,9 @@ import com.government.government.entity.State;
 import com.government.government.entity.Users;
 import com.government.government.response.JsonResponse;
 import com.government.government.service.UserManagementService;
-import com.government.government.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

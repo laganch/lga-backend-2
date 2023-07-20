@@ -1,4 +1,4 @@
-package com.government.government.config;
+package com.government.government.configurations;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,9 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author uhuegbulem chinomso
- * email: chimaisaac60@gmail.com
- * Oct, 2022
+ * @author Anachuna Abuchi
+ * email: aanachuna@oasismgt.net
+ * July, 2023
  **/
 @Configuration
 @ConfigurationProperties(prefix = "app", ignoreInvalidFields = true)

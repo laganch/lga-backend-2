@@ -6,9 +6,9 @@ import com.government.government.dto.SettingsDto;
 import com.government.government.entity.AppModules;
 import com.government.government.entity.Lga;
 import com.government.government.entity.Users;
-import com.government.government.filter.JwtFilter;
 import com.government.government.repository.AppModuleRepo;
 import com.government.government.repository.LgaRepository;
+import com.government.government.security.JwtService;
 import com.government.government.service.SettingControllerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,16 +19,16 @@ import java.time.LocalDateTime;
 public class SettingControllerImpl implements SettingControllerService {
 
     @Autowired
-    private JwtFilter jwtFilter;
-    @Autowired
     private LgaRepository lgaRepository;
     @Autowired
     private AppModuleRepo appModuleRepo;
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public Object saveSettingsApplication(SettingsDto dto) {
 
-        Users user = jwtFilter.user;
+        Users user = jwtService.user;
         Lga lga = lgaRepository.findById(user.getLga().getId()).get();
         lga.setLgaSlogan(dto.getLgaSlogan());
         lga.setAppName(dto.getAppName());
@@ -61,7 +61,7 @@ public class SettingControllerImpl implements SettingControllerService {
         appModules.setIcon(dto.getIcon());
         appModules.setStatus(GenericStatusConstant.ACTIVE);
         appModules.setCreatedAt(LocalDateTime.now());
-        appModules.setCreatedBy(jwtFilter.user);
+        appModules.setCreatedBy(jwtService.user);
 
         return appModuleRepo.save(appModules);
     }

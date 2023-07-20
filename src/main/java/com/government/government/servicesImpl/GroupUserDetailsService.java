@@ -18,7 +18,7 @@ public class GroupUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Users user = userRepository.findByUsernameIgnoreCase(username);
+        Users user = userRepository.findByEmailIgnoreCase(username);
         return new org.springframework.security.core.userdetails
                 .User(user.getUsername(), user.getGeneratedPassword(), new ArrayList<>());
 //        return user.map(GroupUserDetails::new).orElseThrow(()->new UsernameNotFoundException(username + " Does not exists"));

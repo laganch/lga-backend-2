@@ -13,14 +13,12 @@ import com.government.government.repository.AreaRepository;
 import com.government.government.repository.LgaRepository;
 import com.government.government.repository.StateRepository;
 import com.government.government.repository.UserRepository;
-import com.government.government.secuity.JwtService;
+import com.government.government.security.JwtService;
+import com.government.government.security.PasswordService;
 import com.government.government.service.UserManagementService;
-import com.government.government.utils.JWTUtils;
-import com.government.government.utils.PasswordService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,23 +29,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserManagementImpl implements UserManagementService {
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private UserRepository repository;
-    private JwtService jwtService;
-    @Autowired
-    private JWTUtils jwtUtil;
+    private final JwtService jwtService;
     private final PasswordService passwordService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private LgaRepository lgaRepository;
-    @Autowired
-    private StateRepository stateRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private AreaRepository areaRepository;
+    private final LgaRepository lgaRepository;
+    private final StateRepository stateRepository;
+    private final UserRepository userRepository;
+    private final AreaRepository areaRepository;
 
 
     @Override
@@ -88,28 +75,20 @@ public class UserManagementImpl implements UserManagementService {
 
     @Override
     public LoginResponse authenticateUser(AuthRequest dto) throws Exception{
-        LoginResponse response = new LoginResponse();
-        try {
-            String password = userRepository.findByUsernameIgnoreCase(dto.getUserName()).getGeneratedPassword();
-            Boolean passwordMatch = passwordService.comparePassword(password, dto.getPassword());
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            dto.getUserName(),
-                            passwordMatch ? password : dto.getPassword()
-                    ));
-        } catch (Exception ex) {
-            throw new Exception("invalid username/password");
+        Users user = userRepository.findByUsernameIgnoreCase(dto.getEmail())
+                .orElseThrow(() -> new Exception("Invalid Username/Deactivated account- " + dto.getEmail()));
+        if (passwordService.comparePassword(user.getGeneratedPassword(), dto.getPassword())) {
+            String token = jwtService.generateJwtToken(user.getId());
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setToken(token);
+            loginResponse.setRole(user.getRoles());
+            loginResponse.setName(user.getDisplayName());
+            loginResponse.setLga(user.getLga().getName());
+            loginResponse.setState(user.getState().getName());
+            return loginResponse;
+        } else {
+            throw new Exception("Invalid password");
         }
-
-        Users users = userRepository.findByUsernameIgnoreCase(dto.getUserName());
-        String token =  jwtUtil.generateToken(dto.getUserName());
-        response.setToken(token);
-        response.setName(users.getDisplayName());
-        response.setLga(users.getLga().getName());
-        response.setState(users.getState().getName());
-        response.setRole(users.getRoles());
-
-        return response;
     }
 
     @Override

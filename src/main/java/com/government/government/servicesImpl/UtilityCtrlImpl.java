@@ -2,18 +2,15 @@ package com.government.government.servicesImpl;
 
 import com.government.government.Enum.ApprovalStatus;
 import com.government.government.dto.ApplicationDto;
-import com.government.government.dto.DeathApplDto;
 import com.government.government.dto.MarriageDto;
 import com.government.government.dto.ReportDto;
 import com.government.government.entity.applications.DeathApplications;
 import com.government.government.entity.applications.MarriageApplication;
 import com.government.government.repository.DeathApplicationRepo;
 import com.government.government.repository.MarriageApplicationRepo;
+import com.government.government.security.JwtService;
 import com.government.government.service.UtilityCtrlService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +22,7 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
 
     private final DeathApplicationRepo deathApplicationRepo;
     private final MarriageApplicationRepo marriageApplicationRepo;
+    private final JwtService jwtService;
 
     @Override
     public List<ApplicationDto> getDeathApplicationSearch(List<DeathApplications> results) {
@@ -73,6 +71,8 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
 
     @Override
     public ReportDto ReportDashboard() {
+
+        System.out.println(jwtService.user);
         ReportDto dto = new ReportDto();
 
         List<DeathApplications> deathApplications = deathApplicationRepo.findAll();

@@ -1,5 +1,5 @@
 
-package com.government.government.config;
+package com.government.government.configurations;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
@@ -17,16 +17,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author
- */
+ * @author Anachuna Abuchi
+ * email: aanachuna@oasismgt.net
+ * July, 2023
+ **/
+
 @Configuration
 @Component
 public class WebMvcConfigurerComponent implements WebMvcConfigurer, WebMvcRegistrations {
     
     @Value("${trusted.origins}")
     private String[] whitelist;
-
-
     
     @Bean
     public WebMvcConfigurer corsConfigurer() {
