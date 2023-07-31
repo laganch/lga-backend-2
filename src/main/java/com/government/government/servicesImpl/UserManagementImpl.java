@@ -83,8 +83,8 @@ public class UserManagementImpl implements UserManagementService {
             loginResponse.setToken(token);
             loginResponse.setRole(user.getRoles());
             loginResponse.setName(user.getDisplayName());
-            loginResponse.setLga(user.getLga().getName());
-            loginResponse.setState(user.getState().getName());
+//            loginResponse.setLga(user.getLga().getName());
+//            loginResponse.setState(user.getState().getName());
             return loginResponse;
         } else {
             throw new Exception("Invalid password");
