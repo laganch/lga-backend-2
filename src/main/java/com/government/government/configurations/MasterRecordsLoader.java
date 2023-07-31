@@ -63,7 +63,7 @@ public class MasterRecordsLoader {
     private void createSuperAdminUser(UserDto dto) {
         userRepository.findByUsernameIgnoreCase(dto.getEmail())
             .orElseGet(() -> {
-                log.info("=========== CREATING SUPER_ADMIN {} ============", dto.getEmail());
+                log.info("=========== CREATING THE SUPER_ADMIN {} ============", dto.getEmail());
                 try {
                    userManagementService.CreateUser(dto);
                 } catch (Exception e) {
