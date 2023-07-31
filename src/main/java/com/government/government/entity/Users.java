@@ -85,14 +85,14 @@ public class Users extends StatusEntity{
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "AREA_ID", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "AREA_ID", referencedColumnName = "id", nullable = true)
     private Area area;
 
     @ManyToOne
-    @JoinColumn(name = "STATE_ID", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "STATE_ID", referencedColumnName = "id", nullable = true)
     private State state;
 
     @ManyToOne
-    @JoinColumn(name = "LGA_ID", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "LGA_ID", referencedColumnName = "id", nullable = true)
     private Lga lga;
 }

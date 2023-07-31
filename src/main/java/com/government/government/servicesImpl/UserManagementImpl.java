@@ -41,18 +41,18 @@ public class UserManagementImpl implements UserManagementService {
     public Users CreateUser(UserDto user) {
 
         Users users = new Users();
-        State state = stateRepository.findById(user.getState()).get();
-        Lga lga = lgaRepository.findById(user.getLga()).get();
-        Area area = areaRepository.findById(user.getArea()).get();
+//        State state = stateRepository.findById(user.getState()).get();
+//        Lga lga = lgaRepository.findById(user.getLga()).get();
+//        Area area = areaRepository.findById(user.getArea()).get();
 
         users.setCreatedAt(LocalDateTime.now());
 //        users.setCreatedBy(jwtService.getLoggedInUser());
         users.setStatus(GenericStatusConstant.ACTIVE);
         users.setRoles(user.getRole());
         users.setGeneratedPassword(passwordService.hashPassword(user.getPassword()));
-        users.setState(state);
-        users.setLga(lga);
-        users.setArea(area);
+//        users.setState(state);
+//        users.setLga(lga);
+//        users.setArea(area);
         users.setDateOfBirth(user.getDob());
         users.setEmail(user.getEmail());
         users.setUsername(user.getEmail());
