@@ -155,4 +155,13 @@ public class UtilityCtrl {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/death/update")
+    public ResponseEntity<?> DeathUpdate(@RequestParam String id) {
+        try {
+            return ResponseEntity.ok(new JsonResponse("done", utilityCtrlService.DeathUpdate(id)));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            throw new NullPointerException(ex.getMessage());
+        }
+    }
+
 }

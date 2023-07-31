@@ -3,6 +3,7 @@ package com.government.government.entity.applications;
 import com.government.government.Enum.ApprovalStatus;
 import com.government.government.Enum.PaymentStatus;
 import com.government.government.entity.StatusEntity;
+import com.government.government.entity.Users;
 import lombok.Data;
 
 import javax.persistence.Entity;

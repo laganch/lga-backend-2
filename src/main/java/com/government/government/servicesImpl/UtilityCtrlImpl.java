@@ -1,6 +1,7 @@
 package com.government.government.servicesImpl;
 
 import com.government.government.Enum.ApprovalStatus;
+import com.government.government.Enum.PaymentStatus;
 import com.government.government.dto.ApplicationDto;
 import com.government.government.dto.MarriageDto;
 import com.government.government.dto.ReportDto;
@@ -71,8 +72,6 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
 
     @Override
     public ReportDto ReportDashboard() {
-
-        System.out.println(jwtService.user);
         ReportDto dto = new ReportDto();
 
         List<DeathApplications> deathApplications = deathApplicationRepo.findAll();
@@ -145,6 +144,15 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
             deathApplicationRepo.save(applications);
             return "Application Was Queried Successful";
         }
+        return null;
+    }
+
+    @Override
+    public Object DeathUpdate(String id) {
+        DeathApplications applications = deathApplicationRepo.findByApplicationId(id);
+        applications.setPaymentStatus(PaymentStatus.PAID);
+
+        deathApplicationRepo.save(applications);
         return null;
     }
 }

@@ -20,4 +20,6 @@ public interface UtilityCtrlService {
     Object GeneralApproval(String type, String aid);
 
     Object GeneralQuery(String type, String aid, String reason);
+
+    Object DeathUpdate(String id);
 }

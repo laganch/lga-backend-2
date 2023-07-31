@@ -17,5 +17,6 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfigurationProperties {
     private String jwtSecret;
     private int jwtExpiration;
-    private String secretSalt;
+    private String secretSalt;;
+    private String printDirectory;
 }
