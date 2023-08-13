@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface PrintService {
     Resource printCard(List<PrintDto> dtos) throws Exception;
+
+    Resource printMarriage(List<PrintDto> dtos) throws Exception;
 }

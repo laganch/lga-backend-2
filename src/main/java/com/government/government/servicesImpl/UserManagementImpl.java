@@ -2,9 +2,7 @@ package com.government.government.servicesImpl;
 
 import com.government.government.Enum.Gender;
 import com.government.government.Enum.GenericStatusConstant;
-import com.government.government.dto.AuthRequest;
-import com.government.government.dto.LoginResponse;
-import com.government.government.dto.UserDto;
+import com.government.government.dto.*;
 import com.government.government.entity.Area;
 import com.government.government.entity.Lga;
 import com.government.government.entity.State;
@@ -41,18 +39,18 @@ public class UserManagementImpl implements UserManagementService {
     public Users CreateUser(UserDto user) {
 
         Users users = new Users();
-//        State state = stateRepository.findById(user.getState()).get();
-//        Lga lga = lgaRepository.findById(user.getLga()).get();
-//        Area area = areaRepository.findById(user.getArea()).get();
+        State state = stateRepository.findById(user.getState()).get();
+        Lga lga = lgaRepository.findById(user.getLga()).get();
+        Area area = areaRepository.findById(user.getArea()).get();
 
         users.setCreatedAt(LocalDateTime.now());
 //        users.setCreatedBy(jwtService.getLoggedInUser());
         users.setStatus(GenericStatusConstant.ACTIVE);
         users.setRoles(user.getRole());
         users.setGeneratedPassword(passwordService.hashPassword(user.getPassword()));
-//        users.setState(state);
-//        users.setLga(lga);
-//        users.setArea(area);
+        users.setState(state);
+        users.setLga(lga);
+        users.setArea(area);
         users.setDateOfBirth(user.getDob());
         users.setEmail(user.getEmail());
         users.setUsername(user.getEmail());
@@ -83,8 +81,8 @@ public class UserManagementImpl implements UserManagementService {
             loginResponse.setToken(token);
             loginResponse.setRole(user.getRoles());
             loginResponse.setName(user.getDisplayName());
-//            loginResponse.setLga(user.getLga().getName());
-//            loginResponse.setState(user.getState().getName());
+            loginResponse.setLga(user.getLga().getName());
+            loginResponse.setState(user.getState().getName());
             return loginResponse;
         } else {
             throw new Exception("Invalid password");
@@ -106,5 +104,45 @@ public class UserManagementImpl implements UserManagementService {
     public List<Area> getArea(Long id) {
         Lga lga = lgaRepository.findById(id).get();
         return areaRepository.findAllByLga(lga);
+    }
+
+    @Override
+    public Object CreateState(State state) {
+        return stateRepository.findByNameIgnoreCase(state.getName()).orElseGet(() -> {
+            State newRole = new State();
+            newRole.setName(state.getName());
+            newRole.setCode(state.getCode());
+            newRole.setLogo(state.getLogo());
+            return stateRepository.save(newRole);
+        });
+    }
+
+    @Override
+    public Lga CreateLga(LgaDto lga) {
+        return lgaRepository.findByNameIgnoreCase(lga.getName()).orElseGet(() -> {
+
+            State state = stateRepository.findById(lga.getStateId()).get();
+
+            Lga newRole = new Lga();
+            newRole.setName(lga.getName());
+            newRole.setCode(lga.getCode());
+            newRole.setLogo(lga.getLogo());
+            newRole.setState(state);
+            return lgaRepository.save(newRole);
+        });
+    }
+
+    @Override
+    public Area CreateArea(AreaDto area) {
+        return areaRepository.findByNameIgnoreCase(area.getName()).orElseGet(() -> {
+
+            Lga lga = lgaRepository.findById(area.getLgaId()).get();
+
+            Area role = new Area();
+            role.setName(area.getName());
+            role.setCode(area.getCode());
+            role.setLga(lga);
+             return areaRepository.save(role);
+        });
     }
 }

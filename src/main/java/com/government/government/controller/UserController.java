@@ -1,8 +1,6 @@
 package com.government.government.controller;
 
-import com.government.government.dto.AuthRequest;
-import com.government.government.dto.LoginResponse;
-import com.government.government.dto.UserDto;
+import com.government.government.dto.*;
 import com.government.government.entity.Area;
 import com.government.government.entity.Lga;
 import com.government.government.entity.State;
@@ -54,5 +52,20 @@ public class UserController {
     public ResponseEntity<?> getArea(@RequestParam Long id){
         List<Area> area = userManagementService.getArea(id);
         return ResponseEntity.ok(new JsonResponse("Found", area));
+    }
+
+    @GetMapping("/create/state")
+    public ResponseEntity<?> CreateState(@RequestParam State state){
+        return ResponseEntity.ok(new JsonResponse("created", userManagementService.CreateState(state)));
+    }
+
+    @GetMapping("/create/lga")
+    public ResponseEntity<?> CreateLga(@RequestParam LgaDto lga){
+        return ResponseEntity.ok(new JsonResponse("created", userManagementService.CreateLga(lga)));
+    }
+
+    @GetMapping("/create/area")
+    public ResponseEntity<?> CreateArea(@RequestParam AreaDto area){
+        return ResponseEntity.ok(new JsonResponse("created", userManagementService.CreateArea(area)));
     }
 }

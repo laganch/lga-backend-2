@@ -3,71 +3,62 @@ package com.government.government.entity.applications;
 
 import com.government.government.Enum.ApprovalStatus;
 import com.government.government.Enum.PaymentStatus;
+import com.government.government.entity.State;
 import com.government.government.entity.StatusEntity;
+import com.government.government.entity.Users;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
 @Entity
 @Table(name = "MARRIAGE_APPLICATION")
 public class MarriageApplication extends StatusEntity {
+
     private String groomFirstName;
     private String groomLastName;
     private String groomMiddleName;
     private String groomOccupation;
     private String groomAddress;
-    private String groombusstop;
-    private String groomLandmark;
 
     private String brideFirstName;
     private String brideLastName;
     private String brideMiddleName;
     private String brideOccupation;
     private String brideAddress;
-    private String bridebusstop;
-    private String brideLandmark;
 
-    private String groomDOB;
-    private String brideDOB;
     private String marriageDate;
-    private String groomPhonenumber;
-    private String bridePhonenumber;
-
-
-    private String brideFatherFirstName;
-    private String brideFatherLastName;
-    private String brideFatherMiddleName;
-    private String brideFatherOccupation;
-    private String brideFatherAddress;
-
-    private String brideWitnessFirstName;
-    private String brideWitnessLastName;
-    private String brideWitnessMiddleName;
-    private String brideWitnessOccupation;
-    private String brideWitnessAddress;
-
-
-    private String groomFatherFirstName;
-    private String groomFatherLastName;
-    private String groomFatherMiddleName;
-    private String groomFatherOccupation;
-    private String groomFatherAddress;
-
-    private String groomWitnessFirstName;
-    private String groomWitnessLastName;
-    private String groomWitnessMiddleName;
-    private String groomWitnessOccupation;
-    private String groomWitnessAddress;
+    private String groomPhoneNumber;
+    private String bridePhoneNumber;
 
     private String groomSignature;
     private String brideSignature;
     private String brideWitnessSignature;
     private String groomWitnessSignature;
 
+    private String church;
+    private String  weddingDate;
+    private String brideGender;
+    private String brideParentName;
+    private String brideParentAddress;
+    private String groomWitnessName;
+    private String groomParentAddress;
+    private String groomParentName;
+    private String churchAddress;
+    private String priest;
+
+
+    @ManyToOne
+    @JoinColumn(name = "GROOM_ID", referencedColumnName = "id")
+    private Users groom;
+
+
+    @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.NOT_PAID;
+
     private String applicationId = "M-" + LocalDate.now().getYear()+ (int)(Math.random()* 1234607);
 }

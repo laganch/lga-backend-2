@@ -1,6 +1,14 @@
 package com.government.government.configurations;
 
+import com.government.government.dto.AreaDto;
+import com.government.government.dto.LgaDto;
 import com.government.government.dto.UserDto;
+import com.government.government.entity.Area;
+import com.government.government.entity.Lga;
+import com.government.government.entity.State;
+import com.government.government.repository.AreaRepository;
+import com.government.government.repository.LgaRepository;
+import com.government.government.repository.StateRepository;
 import com.government.government.repository.UserRepository;
 import com.government.government.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +27,9 @@ public class MasterRecordsLoader {
     private final TransactionTemplate transactionTemplate;
     private final UserManagementService userManagementService;
     private final UserRepository userRepository;
+    private final LgaRepository lgaRepository;
+    private final StateRepository stateRepository;
+    private final AreaRepository areaRepository;
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
@@ -34,14 +45,37 @@ public class MasterRecordsLoader {
     }
 
     private void loadDefaults(){
-//
-//        var roleDto = RoleDto.builder()
-//                .Permissions("CREAT_ADMIN, ALL_PERMISSIONS, CREATE_MDA")
-//                .name("SUPER_ADMIN")
-//                .description("This role is given to the system administrator from whom all other roles are created from")
-//                .build();
-//
-//        Roles role = userManagementService.CreateRole(roleDto);
+
+        State state = State.builder()
+                .name("Ebonyi State")
+                .code("001")
+                .build();
+
+        userManagementService.CreateState(state);
+
+        State state1 = stateRepository.findByNameIgnoreCase("Ebonyi State").orElse(null);
+
+        var lgaDto = LgaDto.builder()
+                .name("Abakaliki")
+                .code("001")
+                .stateId(state1.getId())
+                .build();
+
+        userManagementService.CreateLga(lgaDto);
+
+        Lga lga = lgaRepository.findByNameIgnoreCase("Abakaliki").orElse(null);
+
+        AreaDto area = AreaDto.builder()
+                .name("Abakpa")
+                .code("001")
+                .lgaId(lga.getId())
+                .build();
+
+        userManagementService.CreateArea(area);
+
+        Area area1 = areaRepository.findByNameIgnoreCase("Abakpa").orElse(null);
+
+
 
         var dto = UserDto.builder()
                 .role("ADMIN")
@@ -49,10 +83,10 @@ public class MasterRecordsLoader {
                 .firstName("LGA")
                 .lastName("Admin")
                 .password("password")
-                .state(6L)
-                .lga(1L)
+                .state(state1.getId())
+                .lga(lga.getId())
                 .address("Ebonyi")
-                .area(2L)
+                .area(area1.getId())
                 .gender("MALE")
                 .phoneNumber("08063014314")
                 .build();

@@ -64,6 +64,10 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
             billsDTO.setBrideFirstName(result.getBrideFirstName());
             billsDTO.setBrideMiddleName(result.getBrideMiddleName());
             billsDTO.setTimeCreated(result.getCreatedAt());
+            billsDTO.setBrideName(result.getBrideFirstName() + " " + result.getBrideMiddleName() + " " + result.getBrideLastName());
+            billsDTO.setPriest(result.getPriest());
+            billsDTO.setGroomFirstName(result.getGroom().getDisplayName());
+
 
             return billsDTO;
 
@@ -132,6 +136,15 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
             deathApplicationRepo.save(applications);
             return "Approval Successful";
         }
+        if (type.equalsIgnoreCase("marriage")){
+            MarriageApplication marriageApplication = marriageApplicationRepo.findByApplicationId(aid);
+            marriageApplication.setApprovalStatus(ApprovalStatus.APPROVED);
+            marriageApplication.setLastUpdatedBy(jwtService.user);
+
+            marriageApplicationRepo.save(marriageApplication);
+
+            return "Approval Successfully";
+        }
         return null;
     }
 
@@ -153,6 +166,15 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
         applications.setPaymentStatus(PaymentStatus.PAID);
 
         deathApplicationRepo.save(applications);
+        return null;
+    }
+
+    @Override
+    public Object MarriageUpdate(String id) {
+        MarriageApplication applications = marriageApplicationRepo.findByApplicationId(id);
+        applications.setPaymentStatus(PaymentStatus.PAID);
+
+        marriageApplicationRepo.save(applications);
         return null;
     }
 }

@@ -22,4 +22,6 @@ public interface UtilityCtrlService {
     Object GeneralQuery(String type, String aid, String reason);
 
     Object DeathUpdate(String id);
+
+    Object MarriageUpdate(String id);
 }

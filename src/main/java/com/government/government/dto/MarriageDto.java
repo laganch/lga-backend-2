@@ -24,37 +24,9 @@ public class MarriageDto {
     private String bridebusstop;
     private String brideLandmark;
 
-    private String groomDOB;
-    private String brideDOB;
     private String marriageDate;
     private String groomPhonenumber;
     private String bridePhonenumber;
-
-
-    private String brideFatherFirstName;
-    private String brideFatherLastName;
-    private String brideFatherMiddleName;
-    private String brideFatherOccupation;
-    private String brideFatherAddress;
-
-    private String brideWitnessFirstName;
-    private String brideWitnessLastName;
-    private String brideWitnessMiddleName;
-    private String brideWitnessOccupation;
-    private String brideWitnessAddress;
-
-
-    private String groomFatherFirstName;
-    private String groomFatherLastName;
-    private String groomFatherMiddleName;
-    private String groomFatherOccupation;
-    private String groomFatherAddress;
-
-    private String groomWitnessFirstName;
-    private String groomWitnessLastName;
-    private String groomWitnessMiddleName;
-    private String groomWitnessOccupation;
-    private String groomWitnessAddress;
 
     private String groomSignature;
     private String brideSignature;
@@ -65,4 +37,15 @@ public class MarriageDto {
     private PaymentStatus paymentStatus;
     private String applicationId;
     private LocalDateTime timeCreated;
+
+    private String church;
+    private String  weddingDate;
+    private String brideGender;
+    private String brideName;
+    private String brideParentAddress;
+    private String groomWitnessName;
+    private String groomParentAddress;
+    private String groomParentName;
+    private String churchAddress;
+    private String priest;
 }

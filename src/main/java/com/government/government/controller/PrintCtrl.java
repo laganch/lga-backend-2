@@ -47,4 +47,24 @@ public class PrintCtrl {
                 .body(resource);
     }
 
+    @PostMapping("marriage/certificate")
+    @Transactional
+    public ResponseEntity<Resource> printMarriage(@RequestBody List<PrintDto> dtos, HttpServletRequest request) throws Exception {
+        Resource resource = printService.printMarriage(dtos);
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            log.error("Could not determine file type.");
+        }
+        // Fallback to the default content type if type could not be determined
+        if (contentType == null) {
+            contentType = "application/pdf";
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=card.pdf")
+                .body(resource);
+    }
+
 }

@@ -5,7 +5,9 @@ import com.government.government.configurations.AppConfigurationProperties;
 import com.government.government.dto.PdfDto;
 import com.government.government.dto.PrintDto;
 import com.government.government.entity.applications.DeathApplications;
+import com.government.government.entity.applications.MarriageApplication;
 import com.government.government.repository.DeathApplicationRepo;
+import com.government.government.repository.MarriageApplicationRepo;
 import com.government.government.service.PrintService;
 import com.government.government.utils.HtmlToPdfCreator;
 import com.government.government.utils.PDFRenderToMultiplePages;
@@ -34,6 +36,7 @@ public class PrintServiceImpl implements PrintService {
     private final HtmlToPdfCreator htmlToPdfCreator;
     private final PDFRenderToMultiplePages pdfRenderToMultiplePages;
     private final AppConfigurationProperties appConfigurationProperties;
+    private final MarriageApplicationRepo marriageApplicationRepo;
 
     @Override
     public Resource printCard(List<PrintDto> dtos) throws Exception {
@@ -84,7 +87,56 @@ public class PrintServiceImpl implements PrintService {
         return pdfRenderToMultiplePages.loadFileAsResource(appConfigurationProperties.getPrintDirectory() + fileName);
     }
 
+    @Override
+    public Resource printMarriage(List<PrintDto> dtos) throws Exception {
+        List<PdfDto> pdfDtos = dtos.stream().map(printDto -> {
+            MarriageApplication card = marriageApplicationRepo.findByApplicationId(printDto.getApplicationId());
 
+            Map<String, Object> extraParameter = new TreeMap<>();
+            String templateName = getTemplate(printDto.getType());
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("dd - MMM - yyyy");
+            Boolean insurance;
+
+            String dataValue = card.getApplicationId();
+            String qrCode = qrCodeServices.base64CertificateQrCode(dataValue);
+
+            extraParameter.put("aid", card.getApplicationId());
+            extraParameter.put("groom", card.getGroom().getDisplayName());
+            extraParameter.put("bride", card.getBrideFirstName() + " " + card.getBrideLastName());
+            extraParameter.put("church", card.getChurch());
+            extraParameter.put("qrCode", qrCode);
+            extraParameter.put("priest", card.getPriest());
+            extraParameter.put("witness", card.getGroomWitnessName());
+
+            PdfDto pojo = new PdfDto();
+            pojo.setTemplateName(templateName);
+            pojo.setExtraParameter(extraParameter);
+            pojo.setMarriageCard(card);
+
+            return pojo;
+
+        }).collect(Collectors.toList());
+
+        List<String> templates = new ArrayList();
+
+        pdfDtos.forEach(pdfPojo -> {
+            try {
+                templates.add(htmlToPdfCreator.createPDFString(pdfPojo.getTemplateName(), htmlToPdfCreator.getContext(pdfPojo.getMarriageCard(), pdfPojo.getExtraParameter())));
+            } catch (IllegalAccessException | IOException | DocumentException e) {
+                e.printStackTrace();
+            }
+        });
+
+
+        String fileName = pdfRenderToMultiplePages.multiPage(templates);
+
+        if (StringUtils.isBlank(fileName)) {
+            throw new Exception("file not found");
+        }
+
+        return pdfRenderToMultiplePages.loadFileAsResource(appConfigurationProperties.getPrintDirectory() + fileName);
+
+    }
 
 
     private String getTemplate(CardTypeConstant type){
@@ -93,6 +145,8 @@ public class PrintServiceImpl implements PrintService {
         switch (type) {
             case BIRTH:
                 return templateName = "birth";
+            case MARRIAGE:
+                return templateName = "marriage";
             default:
                 throw new IllegalStateException("Unexpected value: " + type);
         }

@@ -4,4 +4,5 @@ import com.government.government.entity.applications.MarriageApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MarriageApplicationRepo extends JpaRepository<MarriageApplication, Long> {
+    MarriageApplication findByApplicationId(String id);
 }

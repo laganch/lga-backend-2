@@ -119,6 +119,7 @@ public class UtilityCtrl {
 
     @GetMapping("/general/approval")
     public ResponseEntity<?> GeneralApproval(@RequestParam String type, @RequestParam String aid) {
+        System.out.println("Reached out");
         try {
             return ResponseEntity.ok(new JsonResponse("done", utilityCtrlService.GeneralApproval(type, aid)));
         } catch (IllegalArgumentException | NullPointerException ex) {
@@ -159,6 +160,14 @@ public class UtilityCtrl {
     public ResponseEntity<?> DeathUpdate(@RequestParam String id) {
         try {
             return ResponseEntity.ok(new JsonResponse("done", utilityCtrlService.DeathUpdate(id)));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            throw new NullPointerException(ex.getMessage());
+        }
+    }
+    @GetMapping("/marriage/update")
+    public ResponseEntity<?> MarriageUpdate(@RequestParam String id) {
+        try {
+            return ResponseEntity.ok(new JsonResponse("done", utilityCtrlService.MarriageUpdate(id)));
         } catch (IllegalArgumentException | NullPointerException ex) {
             throw new NullPointerException(ex.getMessage());
         }

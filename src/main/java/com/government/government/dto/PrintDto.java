@@ -7,4 +7,5 @@ import lombok.Data;
 public class PrintDto {
     private Long id;
     private CardTypeConstant type;
+    private String applicationId;
 }
