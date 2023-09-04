@@ -147,6 +147,8 @@ public class PrintServiceImpl implements PrintService {
                 return templateName = "birth";
             case MARRIAGE:
                 return templateName = "marriage";
+            case DEATH:
+                return templateName = "death";
             default:
                 throw new IllegalStateException("Unexpected value: " + type);
         }

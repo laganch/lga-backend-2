@@ -1,6 +1,7 @@
 package com.government.government.controller;
 
 import com.government.government.dto.MarriageDto;
+import com.government.government.entity.applications.BirthApplication;
 import com.government.government.entity.applications.DeathApplications;
 import com.government.government.entity.applications.MarriageApplication;
 import com.government.government.response.JsonResponse;
@@ -19,6 +20,15 @@ public class ApplicationCtrl {
 
     @Autowired
     private ApplicationServiceCtrl applicationServiceCtrl;
+
+    @PostMapping("/save/birth/application")
+    public ResponseEntity<?> saveBirthApplication(@RequestBody BirthApplication dto) {
+        try {
+            return ResponseEntity.ok(new JsonResponse("done", applicationServiceCtrl.saveBirthApplication(dto)));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            throw new NullPointerException(ex.getMessage());
+        }
+    }
 
     @PostMapping("/save/death/application")
     public ResponseEntity<?> saveDeathApplication(@RequestBody DeathApplications dto) {

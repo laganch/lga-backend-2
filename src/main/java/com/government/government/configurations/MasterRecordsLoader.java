@@ -36,7 +36,7 @@ public class MasterRecordsLoader {
         log.info("CREATING MASTER USER...........");
         transactionTemplate.execute(tx -> {
             try {
-                loadDefaults();
+//                loadDefaults();
             } catch (Exception e) {
                 e.printStackTrace();
             }

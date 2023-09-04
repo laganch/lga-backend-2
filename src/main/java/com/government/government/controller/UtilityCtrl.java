@@ -2,23 +2,27 @@ package com.government.government.controller;
 
 
 import com.government.government.dto.ApplicationDto;
+import com.government.government.dto.BirthDto;
 import com.government.government.dto.MarriageDto;
 import com.government.government.dto.MessagesDTO;
-import com.government.government.entity.applications.DeathApplications;
-import com.government.government.entity.applications.MarriageApplication;
+import com.government.government.entity.applications.*;
+import com.government.government.entity.applications.QBirthApplication;
 import com.government.government.entity.applications.QDeathApplications;
 import com.government.government.entity.applications.QMarriageApplication;
+import com.government.government.filter.BirthApplicationFilter;
 import com.government.government.filter.DeathApplicationFilter;
 import com.government.government.filter.MarriageApplicationFilter;
 import com.government.government.repository.app.AppRepository;
 import com.government.government.repository.app.PredicateExtractor;
 import com.government.government.response.JsonResponse;
+import com.government.government.security.JwtService;
 import com.government.government.service.UtilityCtrlService;
 import com.government.government.utils.CloudinaryUpload;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,16 +42,14 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class UtilityCtrl {
 
-    @Autowired
-    private UtilityCtrlService utilityCtrlService;
-    @Autowired
-    private AppRepository appRepository;
-    @Autowired
-    private PredicateExtractor predicateExtractor;
-    @Autowired
-    private CloudinaryUpload cloudinaryUpload;
+    private final UtilityCtrlService utilityCtrlService;
+    private final AppRepository appRepository;
+    private final PredicateExtractor predicateExtractor;
+    private final CloudinaryUpload cloudinaryUpload;
+    private final JwtService jwtService;
 
 
     @PostMapping("/death/assessment/search")
@@ -69,6 +71,10 @@ public class UtilityCtrl {
 //
 //        }
 
+        if (jwtService.user.getRoles().equalsIgnoreCase("User")){
+            userJPAQuery.where(QDeathApplications.deathApplications.createdBy.eq(jwtService.user));
+        }
+
         OrderSpecifier<?> sortedColumn = appRepository.getSortedColumn(filter.getOrder().orElse(Order.DESC), filter.getOrderColumn().orElse("createdAt"), QDeathApplications.deathApplications);
         QueryResults<DeathApplications> userQueryResults = userJPAQuery.select(QDeathApplications.deathApplications).distinct().orderBy(sortedColumn).fetchResults();
         return new QueryResults<>(utilityCtrlService.getDeathApplicationSearch(userQueryResults.getResults()), userQueryResults.getLimit(), userQueryResults.getOffset(), userQueryResults.getTotal());
@@ -82,6 +88,10 @@ public class UtilityCtrl {
                 .where(predicateExtractor.getPredicate(filter))
                 .offset(filter.getOffset().orElse(0))
                 .limit(filter.getLimit().orElse(10));
+
+        if (jwtService.user.getRoles().equalsIgnoreCase("User")){
+            userJPAQuery.where(QMarriageApplication.marriageApplication.createdBy.eq(jwtService.user));
+        }
 
 //        if (filter.getStartDate()!= null && !filter.getStartDate().equals("")) {
 //            LocalDate startDate =  LocalDate.parse(filter.getStartDate(), formatter);
@@ -107,6 +117,33 @@ public class UtilityCtrl {
         }
     }
 
+    @PostMapping("/birth/assessment/search")
+    private QueryResults<BirthDto> getBirthAssessmentBill(BirthApplicationFilter filter) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        JPAQuery<BirthApplication> userJPAQuery = appRepository.startJPAQuery(QBirthApplication.birthApplication)
+                .where(predicateExtractor.getPredicate(filter))
+                .offset(filter.getOffset().orElse(0))
+                .limit(filter.getLimit().orElse(10));
+
+//        if (filter.getStartDate()!= null && !filter.getStartDate().equals("")) {
+//            LocalDate startDate =  LocalDate.parse(filter.getStartDate(), formatter);
+//            userJPAQuery.where(QDirectTaxModel.directTaxModel.timeCreated.goe(startDate.atStartOfDay()));
+//        }
+//        if (filter.getAfterDate() != null && !filter.getAfterDate().equals("")) {
+//            LocalDate endDate = LocalDate.parse(filter.getAfterDate(), formatter);
+//            userJPAQuery.where(QDirectTaxModel.directTaxModel.timeCreated.loe(endDate.atTime(LocalTime.MAX)));
+//
+//        }
+
+        if (jwtService.user.getRoles().equalsIgnoreCase("User")){
+            userJPAQuery.where(QBirthApplication.birthApplication.createdBy.eq(jwtService.user));
+        }
+
+        OrderSpecifier<?> sortedColumn = appRepository.getSortedColumn(filter.getOrder().orElse(Order.DESC), filter.getOrderColumn().orElse("createdAt"), QBirthApplication.birthApplication);
+        QueryResults<BirthApplication> userQueryResults = userJPAQuery.select(QBirthApplication.birthApplication).distinct().orderBy(sortedColumn).fetchResults();
+        return new QueryResults<>(utilityCtrlService.getBirthApplicationSearch(userQueryResults.getResults()), userQueryResults.getLimit(), userQueryResults.getOffset(), userQueryResults.getTotal());
+    }
 
     @GetMapping("/report/dashboard")
     public ResponseEntity<?> ReportDashboard() {
@@ -168,6 +205,14 @@ public class UtilityCtrl {
     public ResponseEntity<?> MarriageUpdate(@RequestParam String id) {
         try {
             return ResponseEntity.ok(new JsonResponse("done", utilityCtrlService.MarriageUpdate(id)));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            throw new NullPointerException(ex.getMessage());
+        }
+    }
+    @GetMapping("/birth/update")
+    public ResponseEntity<?> BirthUpdate(@RequestParam String id) {
+        try {
+            return ResponseEntity.ok(new JsonResponse("done", utilityCtrlService.BirthUpdate(id)));
         } catch (IllegalArgumentException | NullPointerException ex) {
             throw new NullPointerException(ex.getMessage());
         }

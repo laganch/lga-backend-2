@@ -3,10 +3,13 @@ package com.government.government.servicesImpl;
 import com.government.government.Enum.ApprovalStatus;
 import com.government.government.Enum.PaymentStatus;
 import com.government.government.dto.ApplicationDto;
+import com.government.government.dto.BirthDto;
 import com.government.government.dto.MarriageDto;
 import com.government.government.dto.ReportDto;
+import com.government.government.entity.applications.BirthApplication;
 import com.government.government.entity.applications.DeathApplications;
 import com.government.government.entity.applications.MarriageApplication;
+import com.government.government.repository.BirthApplicationRepo;
 import com.government.government.repository.DeathApplicationRepo;
 import com.government.government.repository.MarriageApplicationRepo;
 import com.government.government.security.JwtService;
@@ -24,6 +27,7 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
     private final DeathApplicationRepo deathApplicationRepo;
     private final MarriageApplicationRepo marriageApplicationRepo;
     private final JwtService jwtService;
+    private final BirthApplicationRepo birthApplicationRepo;
 
     @Override
     public List<ApplicationDto> getDeathApplicationSearch(List<DeathApplications> results) {
@@ -145,6 +149,16 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
 
             return "Approval Successfully";
         }
+
+        if (type.equalsIgnoreCase("birth")){
+            BirthApplication birthApplication = birthApplicationRepo.findByApplicationId(aid);
+            birthApplication.setApprovalStatus(ApprovalStatus.APPROVED);
+            birthApplication.setLastUpdatedBy(jwtService.user);
+
+            birthApplicationRepo.save(birthApplication);
+
+            return "Approval Successfully";
+        }
         return null;
     }
 
@@ -155,6 +169,13 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
             applications.setApprovalStatus(ApprovalStatus.QUERIED);
             applications.setReason(reason);
             deathApplicationRepo.save(applications);
+            return "Application Was Queried Successful";
+        }
+        if (type.equalsIgnoreCase("birth")){
+            BirthApplication applications = birthApplicationRepo.findByApplicationId(aid);
+            applications.setApprovalStatus(ApprovalStatus.QUERIED);
+            applications.setReason(reason);
+            birthApplicationRepo.save(applications);
             return "Application Was Queried Successful";
         }
         return null;
@@ -176,5 +197,38 @@ public class UtilityCtrlImpl implements UtilityCtrlService {
 
         marriageApplicationRepo.save(applications);
         return null;
+    }
+
+    @Override
+    public Object BirthUpdate(String id) {
+        BirthApplication applications = birthApplicationRepo.findByApplicationId(id);
+        applications.setPaymentStatus(PaymentStatus.PAID);
+
+        birthApplicationRepo.save(applications);
+        return null;
+    }
+
+    @Override
+    public List<BirthDto> getBirthApplicationSearch(List<BirthApplication> results) {
+        return results.stream().map(result -> {
+
+            BirthDto billsDTO = new BirthDto();
+
+            billsDTO.setApplicationId(result.getApplicationId());
+            billsDTO.setApprovalStatus(result.getApprovalStatus());
+            billsDTO.setPaymentStatus(result.getPaymentStatus());
+            billsDTO.setFather(result.getFatherFirstName() + " " + result.getFatherLastName());
+            billsDTO.setMother(result.getMotherFirstName() + " " + result.getMotherLastName());
+            billsDTO.setCity(result.getCity());
+            billsDTO.setAddress(result.getAddress());
+            billsDTO.setDob(result.getDob());
+            billsDTO.setTime(result.getTime());
+            billsDTO.setTimeCreated(result.getCreatedAt());
+            billsDTO.setHospital(result.getHospital());
+            billsDTO.setWeight(result.getWeight());
+
+            return billsDTO;
+
+        }).collect(Collectors.toList());
     }
 }
